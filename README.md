@@ -363,6 +363,52 @@ The combined discrepancy serves as the anomaly score, with higher values indicat
 
 <hr/>
 
+<h1>Dataset Statistics</h1>
+
+<table border="1" cellpadding="8" cellspacing="0" width="100%">
+  <tr>
+    <th>Dataset</th>
+    <th>Normal Videos (Training)</th>
+    <th>Abnormal Videos / Events (Testing)</th>
+    <th>Testing Videos</th>
+    <th>Notes</th>
+  </tr>
+
+  <tr>
+    <td><b>UCSD Ped2</b></td>
+    <td>16 normal videos</td>
+    <td>Abnormal events embedded in test videos (vehicles, bicycles, carts, skateboards)</td>
+    <td>12 mixed videos (normal + abnormal)</td>
+    <td>
+      Training set contains only normal behavior.
+      Designed specifically for unsupervised video anomaly detection.
+    </td>
+  </tr>
+
+  <tr>
+    <td><b>CUHK Avenue</b></td>
+    <td>16 normal videos</td>
+    <td>~47 abnormal events (running, loitering, throwing objects, wrong-direction walking)</td>
+    <td>21 mixed videos (normal + abnormal)</td>
+    <td>
+      More complex scenes and diverse anomaly types.
+      Standard benchmark for evaluating robustness of anomaly detection models.
+    </td>
+  </tr>
+
+  <tr>
+    <td><b>ShanghaiTech Campus</b></td>
+    <td>Large-scale normal data (~270,000+ frames across 13 scenes)</td>
+    <td>~130 abnormal events across multiple scenes</td>
+    <td>Mixed test set (normal + abnormal frames)</td>
+    <td>
+      Large and diverse dataset with multiple camera views.
+      Frame-level ground truth annotations available for evaluation.
+    </td>
+  </tr>
+</table>
+
+<h1> Detailed Description </h1>
 <h2>1. What is your project about? (Big Picture)</h2>
 
 <p>
