@@ -1,3 +1,4 @@
+<h1>Attention Enhanced Future Frame Prediction for Video Anomaly Detection</h1>
 <h2>Abstract</h2>
 <p>
 Video anomaly detection in surveillance environments is challenging due to the scarcity of abnormal events,
