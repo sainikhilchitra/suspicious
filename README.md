@@ -842,3 +842,125 @@ You can confidently claim:
   <li>Better detection of subtle theft-like anomalies</li>
   <li>Lightweight and unsupervised design</li>
 </ul>
+
+<hr/>
+
+<h1>Observations & Experiment Log</h1>
+
+<hr/>
+
+<h2>Work 1: Baseline Future-Frame Prediction (Without Attention)</h2>
+
+<h3>Objective</h3>
+<p>
+The goal of this experiment is to validate a baseline future-frame prediction model
+for unsupervised video anomaly detection. This step focuses on verifying whether the
+model can learn normal spatio-temporal patterns and produce higher prediction errors
+during abnormal events.
+</p>
+
+<h3>Model Architecture</h3>
+<ul>
+  <li><b>Encoder:</b> Simple CNN with 3 convolutional layers (stride=2) to extract spatial features</li>
+  <li><b>Temporal Model:</b> ConvLSTM to learn temporal evolution of encoded features</li>
+  <li><b>Decoder:</b> Transposed CNN layers to reconstruct the next (future) frame</li>
+</ul>
+
+<p>
+Overall pipeline:
+</p>
+
+<pre>
+Input Frames (5)
+   ↓
+CNN Encoder
+   ↓
+ConvLSTM
+   ↓
+Decoder
+   ↓
+Predicted Next Frame
+</pre>
+
+<h3>Training Details</h3>
+<ul>
+  <li><b>Dataset:</b> UCSD Ped2 (training set – normal videos only)</li>
+  <li><b>Sequence Length:</b> 5 frames</li>
+  <li><b>Image Size:</b> 128 × 128 (grayscale)</li>
+  <li><b>Loss Function:</b> Mean Squared Error (MSE)</li>
+  <li><b>Optimizer:</b> Adam (learning rate = 1e-4)</li>
+  <li><b>Epochs:</b> 30</li>
+</ul>
+
+<p>
+<b>Final Training Loss:</b>
+</p>
+<pre>
+Epoch 30 Avg Loss: 0.000184
+</pre>
+
+<h3>Testing & Inference</h3>
+<p>
+The trained baseline model was evaluated on the UCSD Ped2 test set.
+For each frame, the anomaly score was computed as the mean squared error
+between the predicted frame and the ground-truth frame.
+</p>
+
+<h3>Prediction Error Analysis</h3>
+<p>
+The following figure shows the frame-wise prediction error (MSE) across the test sequence.
+Clear error spikes indicate potential abnormal events.
+</p>
+
+<!-- MSE graph -->
+<img src="images/ucsd_ped2_baseline_mse.png"
+     alt="Prediction Error on UCSD Ped2 Test Set"
+     width="800"/>
+
+<h3>Qualitative Results</h3>
+<p>
+The following comparison shows a ground-truth frame and the corresponding
+predicted future frame produced by the baseline model.
+</p>
+
+<div style="display: flex; gap: 40px;">
+  <div>
+    <p><b>Ground Truth Frame</b></p>
+    <img src="images/ucsd_ped2_baseline_gt.png"
+         alt="Ground Truth Frame"
+         width="350"/>
+  </div>
+
+  <div>
+    <p><b>Predicted Frame</b></p>
+    <img src="images/ucsd_ped2_baseline_pred.png"
+         alt="Predicted Frame"
+         width="350"/>
+  </div>
+</div>
+
+<h3>Observations</h3>
+<ul>
+  <li>The baseline model successfully learns normal motion patterns in the scene.</li>
+  <li>Predicted frames are slightly blurred, which is expected for prediction-based models.</li>
+  <li>Prediction error remains low for normal frames and increases significantly during abnormal events.</li>
+  <li>The error curve exhibits clear spikes corresponding to anomalous activities.</li>
+</ul>
+
+<h3>Limitations Identified</h3>
+<ul>
+  <li>The model treats all spatial regions equally and lacks a focus mechanism.</li>
+  <li>Subtle or localized anomalies may not always produce strong error responses.</li>
+  <li>Pixel-level MSE is sensitive to background motion and illumination changes.</li>
+</ul>
+
+<h3>Conclusion of Work 1</h3>
+<p>
+This experiment confirms that the baseline future-frame prediction framework
+is functioning correctly and can detect anomalies through prediction error.
+However, the absence of a focus mechanism motivates the integration of a
+spatio-temporal attention module in the next stage.
+</p>
+
+<hr/>
+
