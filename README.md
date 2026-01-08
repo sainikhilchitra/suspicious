@@ -964,3 +964,158 @@ spatio-temporal attention module in the next stage.
 
 <hr/>
 
+<h2>Work 2: Attention-Enhanced Future Frame Prediction (MSE-based)</h2>
+
+<h3>Objective</h3>
+<p>
+The objective of this experiment is to evaluate whether incorporating a
+spatio-temporal attention mechanism into a future-frame prediction model
+improves anomaly detection performance when pixel-level MSE is used as the
+anomaly score.
+</p>
+
+<h3>Model Architecture</h3>
+<ul>
+  <li>CNN Encoder for spatial feature extraction</li>
+  <li>ConvLSTM for temporal modeling</li>
+  <li>Spatio-Temporal Attention module after ConvLSTM</li>
+  <li>Decoder for future frame prediction</li>
+</ul>
+
+<pre>
+Input Frames (5)
+   ↓
+CNN Encoder
+   ↓
+ConvLSTM
+   ↓
+Spatio-Temporal Attention
+   ↓
+Decoder
+   ↓
+Predicted Future Frame
+</pre>
+
+<h3>Training Summary</h3>
+<ul>
+  <li>Dataset: UCSD Ped2 (normal training videos only)</li>
+  <li>Sequence Length: 5</li>
+  <li>Image Size: 128 × 128 (grayscale)</li>
+  <li>Loss Function: Mean Squared Error (MSE)</li>
+  <li>Epochs: 50</li>
+</ul>
+
+<pre>
+Epoch 50 Avg Loss: 0.000197
+</pre>
+
+<h3>Qualitative Results</h3>
+<p>
+The attention-enhanced model produces visually sharper future frame predictions.
+Moving objects are better preserved, and background regions are more stable
+compared to the baseline model.
+</p>
+
+<div style="display:flex; gap:40px;">
+  <div>
+    <p><b>Ground Truth Frame</b></p>
+    <img src="images/attention_gt.png" width="350"/>
+  </div>
+
+  <div>
+    <p><b>Predicted Frame (Attention)</b></p>
+    <img src="images/attention_pred.png" width="350"/>
+  </div>
+</div>
+
+<h3>MSE Error Curve (Attention Model)</h3>
+<p>
+The following figure shows the frame-wise prediction error (MSE) on the UCSD Ped2
+test set using the attention-enhanced model.
+</p>
+
+<img src="images/attention_mse_curve.png" width="800"/>
+
+<h3>Quantitative Results (MSE-based AUC)</h3>
+<ul>
+  <li>Baseline AUC (MSE): <b>0.7141</b></li>
+  <li>Attention AUC (MSE): <b>0.6918</b></li>
+</ul>
+
+<p>
+Although attention improves visual prediction quality, the AUC slightly drops
+when using pixel-level MSE. This indicates that MSE is not a reliable anomaly
+score for attention-enhanced predictions.
+</p>
+
+<img src="images/baseline_vs_attention_mse_auc.png" width="600"/>
+
+<h3>Key Observation</h3>
+<p>
+Pixel-level reconstruction error fails to capture the representational
+improvements introduced by attention. This motivates the need for a more robust
+anomaly scoring mechanism.
+</p>
+
+<hr/>
+
+<h2>Work 3: Attention with Feature-Level Anomaly Scoring</h2>
+
+<h3>Objective</h3>
+<p>
+To overcome the limitations of pixel-level MSE, feature-level discrepancy is
+introduced as an additional anomaly score while keeping the model architecture
+unchanged.
+</p>
+
+<h3>Method</h3>
+<p>
+Deep features are extracted from the shared CNN encoder for both predicted and
+ground-truth frames. The final anomaly score is computed as a weighted
+combination of pixel-level and feature-level errors.
+</p>
+
+<pre>
+Final Anomaly Score = α · Pixel MSE + β · Feature-Level Error
+</pre>
+
+<h3>Quantitative Results</h3>
+<ul>
+  <li>Baseline + MSE AUC: <b>0.7141</b></li>
+  <li>Attention + MSE AUC: <b>0.6918</b></li>
+  <li>Attention + Feature-Level Error AUC: <b>0.7753</b></li>
+</ul>
+
+<h3>ROC Curve (Attention + Feature-Level Error)</h3>
+<img src="images/attention_feature_auc.png" width="600"/>
+
+<h3>ROC Curve Comparison</h3>
+<p>
+The following figure compares the ROC curves of the baseline model and the
+attention-enhanced model with feature-level anomaly scoring.
+</p>
+
+<img src="images/baseline_vs_attention_feature_auc.png" width="600"/>
+
+<h3>Observations</h3>
+<ul>
+  <li>Feature-level error provides a smoother and more discriminative anomaly score.</li>
+  <li>Subtle motion anomalies are detected more effectively.</li>
+  <li>The combination of attention and feature-level scoring yields the best performance.</li>
+  <li>AUC improves by <b>+6.1%</b> over the baseline model.</li>
+</ul>
+
+<h3>Conclusion from Work 3</h3>
+<p>
+Attention improves feature representations, but feature-level anomaly scoring is
+essential to fully exploit this improvement. The proposed framework achieves
+significant performance gains on UCSD Ped2 under a proper evaluation protocol.
+</p>
+
+<hr/>
+
+<h2>Status</h2>
+<p>
+Work 2 and Work 3 are complete. The model design, scoring strategy, and evaluation
+pipeline are validated and ready for cross-dataset evaluation.
+</p>
