@@ -1114,9 +1114,117 @@ significant performance gains on UCSD Ped2 under a proper evaluation protocol.
 
 <hr/>
 
-<h2>Status</h2>
+<hr/>
+
+<h2>Work 4: Anomaly Localization with Red Bounding Boxes (Error Heatmap → Connected Components)</h2>
+
+<h3>Objective</h3>
 <p>
-Work 2 and Work 3 are complete. The model design, scoring strategy, and evaluation
-pipeline are validated and ready for cross-dataset evaluation.
+The objective of this work is to extend frame-level anomaly scoring into a practical
+localization output by highlighting regions responsible for abnormal behavior.
+This is done by converting the prediction error into a spatial heatmap and drawing
+red bounding boxes around the most relevant high-error regions.
 </p>
-<p>Next working on dataset 2</p>
+
+<h3>Where This Fits in the Pipeline</h3>
+<ul>
+  <li>The model still performs future-frame prediction using the attention-enhanced architecture.</li>
+  <li>Anomaly scoring still uses a weighted combination of pixel-level and feature-level errors.</li>
+  <li>Localization is performed as a post-processing step using the absolute pixel error map.</li>
+</ul>
+
+<pre>
+Input Frames (5)
+   ↓
+CNN Encoder
+   ↓
+ConvLSTM
+   ↓
+Spatio-Temporal Attention
+   ↓
+Decoder
+   ↓
+Predicted Future Frame
+   ↓
+Absolute Error Map |pred - gt|
+   ↓
+Normalize → Threshold → Connected Components
+   ↓
+Red Bounding Box Overlay + Video Export
+</pre>
+
+<h3>Localization Method</h3>
+<p>
+For each predicted frame, an error heatmap is computed using the absolute pixel difference
+between the predicted frame and the actual frame. The heatmap is normalized to [0,1], then
+thresholded to form a binary mask. Connected components are extracted from this mask and
+the largest component(s) are converted into bounding boxes. These boxes are drawn in red
+on the ground-truth frame and exported as an MP4 video for each test sequence.
+</p>
+
+<h3>Key Implementation Choices</h3>
+<ul>
+  <li><b>Error heatmap:</b> |pred − gt| (absolute pixel error), normalized to [0,1]</li>
+  <li><b>Thresholding:</b> fixed threshold in normalized space (thr)</li>
+  <li><b>Region extraction:</b> Connected Components (more robust than contour extraction for thin/noisy masks)</li>
+  <li><b>Filtering:</b> minimum component area (min_area) to suppress small noisy regions</li>
+  <li><b>Selection:</b> keep only the top-k largest component(s) (keep_top_k)</li>
+  <li><b>Overlay:</b> red rectangle drawn on the ground-truth frame</li>
+  <li><b>Output:</b> per-video MP4 export for qualitative inspection</li>
+</ul>
+
+<h3>Parameters Used (Current Settings)</h3>
+<ul>
+  <li><b>Sequence Length:</b> 5</li>
+  <li><b>Video FPS:</b> 10</li>
+  <li><b>Heatmap threshold (thr):</b> 0.35</li>
+  <li><b>Minimum region area (min_area):</b> 20</li>
+  <li><b>Top-k regions (keep_top_k):</b> 1</li>
+  <li><b>Score weights:</b> α = 0.3, β = 0.7 (used for anomaly scoring; localization uses pixel error heatmap)</li>
+  <li><b>Export folder:</b> boxed_videos/</li>
+</ul>
+
+<h3>Qualitative Output (Red-Box Video Exports)</h3>
+<p>
+This work produces per-test-sequence videos with red bounding boxes overlaid on each frame.
+The bounding boxes are generated from the normalized absolute prediction error heatmap using
+thresholding and connected components. The videos below provide qualitative evidence of where
+the model localizes abnormality over time.
+</p>
+
+<h4>Sample 1: Test004</h4>
+<video width="640" controls>
+  <source src="boxed_videos/Test004.mp4" type="video/mp4"/>
+  Your browser does not support the video tag.
+</video>
+
+<h4>Sample 2: Test006</h4>
+<video width="640" controls>
+  <source src="boxed_videos/Test006.mp4" type="video/mp4"/>
+  Your browser does not support the video tag.
+</video>
+
+<h3>Observations</h3>
+<ul>
+  <li>The connected-components based approach provides stable region proposals even when the mask is sparse or fragmented.</li>
+  <li>Using <b>keep_top_k = 1</b> reduces clutter and highlights the most dominant error region per frame.</li>
+  <li>Localization is sensitive to the threshold <b>thr</b>: lower values increase recall but may include background noise; higher values may miss subtle anomalies.</li>
+  <li>Small noisy regions are reduced using <b>min_area</b>, improving box consistency across consecutive frames.</li>
+  <li>Overall, this step improves interpretability by showing <i>where</i> the model indicates abnormality, not just <i>whether</i> abnormality exists.</li>
+</ul>
+
+<h3>Limitations Identified</h3>
+<ul>
+  <li>The localization heatmap is derived from pixel error, so it may highlight regions affected by illumination change or motion blur.</li>
+  <li>Bounding boxes may be coarse when the anomalous region is diffuse or when multiple regions are abnormal in the same frame.</li>
+  <li>Current localization is purely error-driven and does not explicitly incorporate object boundaries; boxes may not tightly fit the anomalous object.</li>
+</ul>
+
+<h3>Conclusion of Work 4</h3>
+<p>
+This work adds interpretability to the anomaly detection pipeline by exporting red-box
+localized videos. The approach demonstrates that prediction error maps can be used to
+highlight candidate anomalous regions across time, enabling qualitative validation and
+supporting downstream monitoring or alerting use cases.
+</p>
+
