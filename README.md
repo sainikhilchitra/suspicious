@@ -1193,10 +1193,17 @@ the model localizes abnormality over time.
 </p>
 
 <h4>Sample 1: Test004</h4>
-<p><a href="scripts/boxed_videos/Test004.mp4">Test004 (MP4)</a></p>
+<p>
+<a href="scripts/boxed_videos/Test004.mp4">Download / View Test004 Video (MP4)</a>
+</p>
+<img src="images/Test004_preview.gif" width="640" alt="Test004 preview"/>
 
 <h4>Sample 2: Test006</h4>
-<p><a href="scripts/boxed_videos/Test006.mp4">Test006 (MP4)</a></p>
+<p>
+<a href="scripts/boxed_videos/Test006.mp4">Download / View Test006 Video (MP4)</a>
+</p>
+<img src="images/Test006_preview.gif" width="640" alt="Test006 preview"/>
+
 
 
 
