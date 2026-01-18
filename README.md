@@ -1193,16 +1193,12 @@ the model localizes abnormality over time.
 </p>
 
 <h4>Sample 1: Test004</h4>
-<video width="640" controls>
-  <source src="scripts/boxed_videos/Test004.mp4" type="video/mp4"/>
-  Your browser does not support the video tag.
-</video>
+<video wid<h4>Sample 1: Test004</h4>
+<p><a href="boxed_videos/Test004.mp4">Test004 (MP4)</a></p>
 
 <h4>Sample 2: Test006</h4>
-<video width="640" controls>
-  <source src="scripts/boxed_videos/Test006.mp4" type="video/mp4"/>
-  Your browser does not support the video tag.
-</video>
+<p><a href="boxed_videos/Test006.mp4">Test006 (MP4)</a></p>
+
 
 <h3>Observations</h3>
 <ul>
