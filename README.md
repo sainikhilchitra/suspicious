@@ -1,4 +1,4 @@
-<h1>Attention Enhanced Future Frame Prediction for Video Anomaly Detection</h1>
+<h1> Attention-Enhanced Future Frame Prediction with Feature Discrepancy Scoring for Video Anomaly Detection </h1>
 <h2>Abstract</h2>
 <p>
 Video anomaly detection in surveillance environments is challenging due to the scarcity of abnormal events,
@@ -1341,4 +1341,5 @@ the model localizes abnormality over time.
 <p>
 <a href="scripts/boxed_videos_avenue_attention/08.mp4">Download / View 08 Video (MP4)</a>
 </p>
+
 <img src="images/08_avenue_preview.gif" width="640" alt="Test004 preview"/>
