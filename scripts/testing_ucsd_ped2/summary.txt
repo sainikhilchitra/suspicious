@@ -1,0 +1,5 @@
+Baseline AUC (Pixel MSE): 0.737509
+Attention AUC (Pixel MSE): 0.691792
+Attention AUC (Pixel+Feature): 0.775323
+Aligned GT frames: 1950 | Anomalous: 1613
+Checkpoints: baseline=baseline_ucsd_ped2.pth, attention=attention_ucsd_ped2.pth
