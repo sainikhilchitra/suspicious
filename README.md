@@ -866,9 +866,7 @@ during abnormal events.
   <li><b>Decoder:</b> Transposed CNN layers to reconstruct the next (future) frame</li>
 </ul>
 
-<p>
-Overall pipeline:
-</p>
+<p>Overall pipeline:</p>
 
 <pre>
 Input Frames (5)
@@ -889,80 +887,92 @@ Predicted Next Frame
   <li><b>Image Size:</b> 128 × 128 (grayscale)</li>
   <li><b>Loss Function:</b> Mean Squared Error (MSE)</li>
   <li><b>Optimizer:</b> Adam (learning rate = 1e-4)</li>
-  <li><b>Epochs:</b> 30</li>
+  <li><b>Epochs:</b> 50</li>
 </ul>
 
-<p>
-<b>Final Training Loss:</b>
-</p>
+<p><b>Final Training Loss:</b></p>
 <pre>
-Epoch 30 Avg Loss: 0.000184
+Epoch 50 Avg Loss: 0.000184
 </pre>
 
 <h3>Testing & Inference</h3>
 <p>
 The trained baseline model was evaluated on the UCSD Ped2 test set.
-For each frame, the anomaly score was computed as the mean squared error
-between the predicted frame and the ground-truth frame.
+For each predicted frame, the anomaly score was computed as the mean squared error (MSE)
+between the predicted future frame and the ground-truth frame.
 </p>
 
-<h3>Prediction Error Analysis</h3>
+<h3>Prediction Error Analysis (MSE Curve)</h3>
 <p>
-The following figure shows the frame-wise prediction error (MSE) across the test sequence.
-Clear error spikes indicate potential abnormal events.
+Frame-wise prediction error across the test sequence. Clear spikes indicate potential abnormal events.
 </p>
 
-<!-- MSE graph -->
-<img src="images/ucsd_ped2_baseline_mse.png"
-     alt="Prediction Error on UCSD Ped2 Test Set"
-     width="800"/>
+<img
+  src="images/BASELINE_MSE_CURVE_PED2.png"
+  alt="UCSD Ped2 Baseline - Prediction Error (MSE) Curve"
+  width="900"
+/>
 
-<h3>Qualitative Results</h3>
+<h3>Detection Performance (AUC / ROC Curve)</h3>
 <p>
-The following comparison shows a ground-truth frame and the corresponding
-predicted future frame produced by the baseline model.
+Receiver Operating Characteristic (ROC) curve computed using MSE-based anomaly scores and aligned ground-truth labels.
 </p>
 
-<div style="display: flex; gap: 40px;">
-  <div>
-    <p><b>Ground Truth Frame</b></p>
-    <img src="images/ucsd_ped2_baseline_gt.png"
-         alt="Ground Truth Frame"
-         width="350"/>
+<img
+  src="images/BASELINE_AUC_ROC_CURVE_PED2.png"
+  alt="UCSD Ped2 Baseline - ROC Curve (AUC)"
+  width="700"
+/>
+
+<h3>Qualitative Results (GT vs Predicted)</h3>
+<p>
+A qualitative comparison between the ground-truth frame and the predicted future frame.
+</p>
+
+<div style="display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start;">
+  <div style="max-width:420px;">
+    <p style="margin:0 0 8px 0;"><b>Ground Truth Frame</b></p>
+    <img
+      src="images/BASELINE_GT_PED2.png"
+      alt="UCSD Ped2 Baseline - Ground Truth Frame"
+      width="400"
+    />
   </div>
 
-  <div>
-    <p><b>Predicted Frame</b></p>
-    <img src="images/ucsd_ped2_baseline_pred.png"
-         alt="Predicted Frame"
-         width="350"/>
+  <div style="max-width:420px;">
+    <p style="margin:0 0 8px 0;"><b>Predicted Frame</b></p>
+    <img
+      src="images/BASELINE_PRED_PED2.png"
+      alt="UCSD Ped2 Baseline - Predicted Frame"
+      width="400"
+    />
   </div>
 </div>
 
 <h3>Observations</h3>
 <ul>
-  <li>The baseline model successfully learns normal motion patterns in the scene.</li>
-  <li>Predicted frames are slightly blurred, which is expected for prediction-based models.</li>
-  <li>Prediction error remains low for normal frames and increases significantly during abnormal events.</li>
-  <li>The error curve exhibits clear spikes corresponding to anomalous activities.</li>
+  <li>The baseline model learns normal scene dynamics and produces low MSE on normal segments.</li>
+  <li>Predicted frames tend to be slightly blurred, consistent with prediction-based methods.</li>
+  <li>MSE spikes align with abnormal events, supporting the validity of prediction-error scoring.</li>
+  <li>ROC curve indicates measurable separability between normal and abnormal frames using pixel-level error alone.</li>
 </ul>
 
 <h3>Limitations Identified</h3>
 <ul>
-  <li>The model treats all spatial regions equally and lacks a focus mechanism.</li>
-  <li>Subtle or localized anomalies may not always produce strong error responses.</li>
-  <li>Pixel-level MSE is sensitive to background motion and illumination changes.</li>
+  <li>All spatial regions are treated equally; the model lacks a mechanism to prioritize suspicious regions.</li>
+  <li>Subtle/localized anomalies may not generate strong pixel-error spikes.</li>
+  <li>Pixel-level MSE is sensitive to illumination changes and background motion, which can cause false alarms.</li>
 </ul>
 
 <h3>Conclusion of Work 1</h3>
 <p>
-This experiment confirms that the baseline future-frame prediction framework
-is functioning correctly and can detect anomalies through prediction error.
-However, the absence of a focus mechanism motivates the integration of a
-spatio-temporal attention module in the next stage.
+This experiment confirms that the baseline future-frame prediction framework is functioning correctly
+and can detect anomalies using MSE-based prediction error and AUC evaluation. The limitations motivate
+introducing spatio-temporal attention in the next stage to improve focus and robustness.
 </p>
 
 <hr/>
+
 
 <h2>Work 2: Attention-Enhanced Future Frame Prediction (MSE-based)</h2>
 
